@@ -1,150 +1,152 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
-<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
-<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-<script type="text/javascript" src="http://dev.jtsage.com/cdn/spinbox/latest/jqm-spinbox.min.js"></script>
-</head>
-<body>
-
-<script>
-var chosenItems = {};
-
-$( document ).ready(function() {
-    // you can only save strings to local storage
-	// so all js objects have to be saved in the form JSON.stringify()
-	// and retrieved in the format JSON.parse(obj)
-    var q = localStorage.getItem("previousList");
-	if (q!=null) chosenItems = JSON.parse(q);
-});
-
-
-
-function gotoQuantity(obj)
-{
-
-	vegetablesChosen = $(obj).text();
-	$("#vegname").text(vegetablesChosen);
-	$.mobile.changePage("#quantity");
-
-
-
-}
-
-function showChosenItems()
-{
-
-
-	//remove existing items from shopping list
-	 $("#shoppingList").empty();
-
-	 var keyz = [];
-	 for (var key in chosenItems)  keyz.push(key);
-	 keyz.sort();
-
-
-	 //iterate through the sorted chosenItems
-	 keyz.forEach(function(element) {
-	  vegData = element + ":" +  chosenItems[element];
-	  $('<li>').append('<a href="#">' + vegData + '</a>').appendTo('#shoppingList');
-	 });
-
-	//you have to navigate to the page after you have populated
-	$.mobile.changePage("#finalShoppingList");
-	 $("#shoppingList").listview('refresh');
-
-
-}
-
-function backToList()
-{
-	saveChoice();
-	//$.mobile.changePage("#pageone");
-
-}function addItem(){}
-
-function saveChoice()
-{
-	vegetableChosen = $("#vegname").text();
-	quantityChosen = $("#spin").val();
-	$('#confirm').text(vegetableChosen + " : " + quantityChosen);
-	$("#myPopup").popup("open");
-	chosenItems[vegetableChosen] = quantityChosen;
-	localStorage.setItem("previousList",JSON.stringify(chosenItems));
-    setTimeout(function(){
-		$("#spin").val(0);
-		$("#vegname").text("");
-		$.mobile.changePage("#pageone");
-		showChosenItems();
-		//must close popup after you have changed the page
-		$("#myPopup").popup("close");
-		}, 1000);
-}
-$( document ).ready(function() {
-    $('.prod').click(function() {
-		gotoQuantity($(this));
-	});
-
-
-
-});
-
-$(document).ready(function(){ //Initally hides the search bar and shows it once it is clicked on search.
-
-    $(".search").click(function(){
-         $(".ui-filterable").toggle();
-    });
-	$(".ui-filterable").toggle();
-});
-
-</script>
-<div data-role="page" id="pageone">
- <div style = background:# data-role="header">    <a class="search" data-icon="search">Search</a>    <h1> <p style="color:#000000" </p>Shopping List Application</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script type="text/javascript" src="http://dev.jtsage.com/cdn/spinbox/latest/jqm-spinbox.min.js"></script>
+</head>
+<body>
 
-  </div>
-  <div data-role="main" class="ui-content">
-    <form class="ui-filterable">
-      <input display id="myFilter" data-type="search">
-    </form>
-	<div class="ui-grid-a">      <a style="float: left;" data-rel="popup" href="#remove" class="ui-btn">Remove Items</a>        <a style="float: right;" data-rel="popup" href="#purchases" class="ui-btn">Purchases</a>
-      <div class="ui-block-a">
-            <ul data-role="listview" data-filter="true" data-input="#myFilter" data-autodividers="true" data-inset="true">
-
-    </ul>
-      </div>
-      <div class="ui-block-b">
-        <div id="allVegetablesChosen">
-			<ul data-role="listview" data-filter="true" data-sort="true" data-input="#myFilter" data-autodividers="true" data-inset="true" id="shoppingList">
-			</ul>
-		</div>
-      </div>
-    </div>
-  </div>
-  <div data-role="footer" data-position="fixed">
-  <a style="float: right;" data-rel="popup" href="#quantity"  onclick="gotoQuantity(this)"  class="items">Add Item</a>
-  <a style="float: right;" data-rel="popup" href="#addlist" class="ui-btn">Add List</a>
-	</div>
-</div>
-
-<div data-role="page" id="quantity">
-  <div data-role="main" class="ui-content"><div style = background:# data-role="header">    <a class="search" data-icon="home" onclick="backToList()">Home</a>    <h1> <p style="color:#000000"</p>Shopping List Application</h1>    </div>    </form>  	  <h1 id="vegname"></h1>
-     <div class="ui-field-contain">
-       <label for="item">Item:</label>       <input type="text" name="item" id="fullname">
-       <input type="text" data-role="spinbox" name="spin" id="spin" value="0" min="0" max="10" />
-      </div>
-      <button onclick="backToList()">Confirm</button>
-      <button onclick="showChosenItems()">Show Chosen Items</button>
-
-	 <div data-role="popup" id="myPopup">
-		<p id="confirm">This is a simple popup.</p>
-	 </div>
+<script>
+    var chosenItems = {};
+    $( document ).ready(function() {
+        var q = localStorage.getItem("previousList");
+        if (q!=null) chosenItems = JSON.parse(q);
+        console.log(chosenItems);
+    });
 
-
+    function gotoQuantity(obj) {
+        $.mobile.changePage("#quantity");
+        vegetablesChosen = $(obj).text();
+        $("#vegname").text(vegetablesChosen);
+    }
 
-
-<div data-role="page" id="itemitem"></div>
-
-</body>
-</html>
+    function showChosenItems() {
+        //remove existing items from shopping list
+         $("#shoppingList").empty();
+
+         //iterate through the dictionary chosenItems
+         for (var key in chosenItems) {
+            splitChosenItems = chosenItems[key].split(':'); // use ':' as a splitter; [0] = quantity, [1] = is it bought
+            var quantity = splitChosenItems[0];
+            var isBought = splitChosenItems[1];
+            vegData = key + ":" +  quantity;
+            var checked = '';
+            if (isBought=='true') checked = "checked"; // attribute "checked" ticks the checkbox
+            $('<li>').append('<span onclick="remove(\'' + key + '\')" style="text-decoration: underline;color: red;">Remove</span> <input ' + checked + ' type="checkbox" onclick="buy(\'' + key + '\')">' + vegData).appendTo('#shoppingList');
+         }
+        //you have to navigate to the page after you have populated
+        $.mobile.changePage("#finalShoppingList");
+        $("#shoppingList").listview('refresh');
+    }
+
+    function backToList() {
+        $.mobile.changePage("#pageone");
+        $("#spin").val(0);
+    }
+    01
+    function saveChoice() {
+        if ($("#spin").val()=="0") return; // make sure we have at least 1 item to add
+        vegetableChosen = $("#vegname").text();
+        quantityChosen = $("#spin").val();
+        chosenItems[vegetableChosen] = quantityChosen + ':false';
+        persist();
+        $.mobile.changePage("#pageone");
+    }
+
+    function buy(vegName) {
+        splitChosenItems = chosenItems[vegName].split(':');
+        var quantity = splitChosenItems[0];
+        var isBought = splitChosenItems[1];
+        var opposite = (isBought == "true" ? "false" : "true"); // flip the boolean around; if it was true assign it false, otherwise assign it true
+        chosenItems[vegName] = quantity + ':' + opposite;
+        persist();
+    }
+
+    function remove(vegName) {
+        delete chosenItems[vegName] ;
+        persist();
+        showChosenItems();
+    }
+
+    function persist() {
+        localStorage.setItem("previousList",JSON.stringify(chosenItems));
+    }
+
+	$(document).ready(function(){
+		$(".search").click(function(){
+		$(".ui-filterable").toggle();
+		});
+	$(".ui-filterable").toggle();
+	});
+
+</script>
+
+<div data-role="page" id="pageone">
+    <div data-role="main" class="ui-content">
+	<div data-role="header" style="background:#ADD8E6">
+
+  <h1>Shopping List Application</h1>
+  <a class="search" data-icon="search">Search</a>
+</div>
+        <h2>Items</h2>
+		  <button onclick="add()">Add Items</button>
+		  <button onclick="showChosenItems()">Show Chosen Items</button>
+        <form class="ui-filterable">
+            <input id="myFilter" data-type="search">
+        </form>
+        <ul data-role="listview" data-filter="true" data-input="#myFilter" data-autodividers="true" data-inset="true">
+            <li><a onclick="gotoQuantity(this)">Apples</a></li>
+            <li><a onclick="gotoQuantity(this)">Apricots</a></li>
+            <li><a onclick="gotoQuantity(this)">Aubergines</a></li>
+            <li><a onclick="gotoQuantity(this)">Bananas</a></li>
+            <li><a onclick="gotoQuantity(this)">Beetroot</a></li>
+            <li><a onclick="gotoQuantity(this)">Carrots</a></li>
+            <li><a onclick="gotoQuantity(this)">Courgettes</a></li>
+            <li><a onclick="gotoQuantity(this)">Chives</a></li>
+            <li><a onclick="gotoQuantity(this)">Fennel</a></li>
+            <li><a onclick="gotoQuantity(this)">Potatoes</a></li>
+            <li><a onclick="gotoQuantity(this)">Strawberries</a></li>
+            <li><a onclick="gotoQuantity(this)">Milk</a></li>
+            <li><a onclick="gotoQuantity(this)">Detergent</a></li>
+            <li><a onclick="gotoQuantity(this)">Bananas</a></li>
+            <li><a onclick="gotoQuantity(this)">Sugar</a></li>
+            <li><a onclick="gotoQuantity(this)">Cauliflower</a></li>
+            <li><a onclick="gotoQuantity(this)">Detergent</a></li>
+
+
+
+
+        </ul>
+        <br />
+
+    </div>
+</div>
+
+<div data-role="page" id="quantity">
+    <div data-role="main" class="ui-content">
+        <div id="vegname"></div>
+        <div class="ui-field-contain">
+            <label for="spin">Enter Quantity</label>
+            <input type="text" data-role="spinbox" name="spin" id="spin" value="0" min="0" max="10"/>
+        </div>
+        <button onclick="saveChoice()">Add to list</button>
+        <button onclick="backToList()">Choose Again</button>
+        <button onclick="showChosenItems()">Show Chosen Items</button>
+    </div>
+
+</div>
+
+<div data-role="page" id="finalShoppingList">
+    <div data-role="main" class="ui-content">
+        <div id="allVegetablesChosen">
+            <ul data-role="listview" data-filter="true" data-input="#myFilter" data-autodividers="true" data-inset="true" id="shoppingList"></ul>
+            <button onclick="$.mobile.changePage('#pageone');">Choose Again</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
